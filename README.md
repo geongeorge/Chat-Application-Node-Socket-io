@@ -2,6 +2,10 @@
 
 A chat application made using node and sockets.io
 
+<img src="screenshot.gif">
+
 To run
-`node app.js`
+~~~
+node appn.js
+~~~
 
