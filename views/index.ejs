@@ -6,12 +6,84 @@
     <title>Yo Yo app</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+
     <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
-    <div class="container mycontainer">
-        <h2> My application loaded!</h2>
-        <a href="#" class="button is-primary">Hello</a>
+    <div id="app" class="container">
+        <div class="mycontainer" ref="msgbigbox">
+            <h2 class="title is-2">Chat App</h2>
+            <div class="messages">
+                <div v-for="m in msgs">
+                    <div class="chat" :class="{'chat-u' : m.type == 'u', 'chat-f': m.type=='f'}">{{m.msg}}</div>
+                    <div class="clr"></div>
+                </div>
+            </div>
+        </div>   
+        <div class="text-part">
+            <div class="columns is-mobile">
+                <div class="column is-10">
+                    <input type="text" v-model="messageVal" class="input" @keyup.enter="sendMsg" id="chatinput">
+                </div>
+                <div class="column is-2">
+                    <button class="button is-success is-fullwidth" @click="sendMsg">Go</button>
+                </div>
+            </div>
+        </div>
     </div>
+<script>
+    var vm = new Vue({
+        el : "#app",
+        data : {
+            messageVal : "",
+            msgs : []
+        },
+        methods : {
+            sendMsg: function() {
+                sendSocketMsg(this.messageVal)
+                this.msgs.push({
+                    type: "u",
+                    msg: this.messageVal
+                })
+                this.messageVal = ""
+            },
+            sendExplicitMsg: function(mytype,mymsg) {
+                this.msgs.push({
+                    type: mytype,
+                    msg: mymsg
+                })
+            },
+            updateScroll: function() {
+                window.scrollTo(0,document.body.scrollHeight)
+            }
+        },
+        mounted() {
+            console.log("Mounted")
+        },
+        updated() {
+            console.log("Updated")
+            this.updateScroll()
+        }
+    })
+    
+
+        var socket = io.connect('http://localhost:3000');
+        socket.on('newmsg', function (data) {
+            // if(socket.sessionid == data.uid) return; //dont print our own msgs
+            vm.sendExplicitMsg("f",data.msg)
+          console.log(data);
+        });
+        function sendSocketMsg(msg) {
+            socket.emit('newmsg', {
+                msg: msg,
+                uid: socket.sessionid
+            });
+        }
+        
+</script>
 </body>
 </html>
