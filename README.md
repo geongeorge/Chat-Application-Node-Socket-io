@@ -6,12 +6,12 @@ A chat application made using node and sockets.io
 
 ## Install and run
 
-Install the required modules
+Install the required modules 🔧
 ~~~
 npm install
 ~~~
 
-To run
+To run 🚀
 ~~~
 node app.js
 ~~~
