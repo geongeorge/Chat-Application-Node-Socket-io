@@ -6,6 +6,6 @@ A chat application made using node and sockets.io
 
 To run
 ~~~
-node appn.js
+node app.js
 ~~~
 
